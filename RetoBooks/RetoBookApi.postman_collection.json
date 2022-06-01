@@ -1,0 +1,940 @@
+{
+	"info": {
+		"_postman_id": "255b4082-060b-4e05-a23f-f9736f805c77",
+		"name": "RetoBookApi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21225657"
+	},
+	"item": [
+		{
+			"name": "Obtener Estado",
+			"item": [
+				{
+					"name": "Obtener Estado",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Base_url}}/status",
+							"host": [
+								"{{Base_url}}"
+							],
+							"path": [
+								"status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Obtener Libros",
+			"item": [
+				{
+					"name": "Obtener Libros Valido",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Consulta exitosa, codigo 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"La respuesta tiene la cadena de caracteres -Just as I am - la cual corresponde a un libro registrado\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"Just as I Am\");\r",
+									"});\r",
+									"pm.test(\"El nombre del libro The Russian esta registrado\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    var idBook=jsonData.find(x=>x.id ==1)\r",
+									"    console.log(idBook)\r",
+									"    pm.expect(idBook.name).to.eql(\"The Russian\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Base_url}}/books",
+							"host": [
+								"{{Base_url}}"
+							],
+							"path": [
+								"books"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Obtener libros por id",
+			"item": [
+				{
+					"name": "Obtener libro valido",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Consulta Exitosa, codigo 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"La respuesta tiene la cadena de caracteres -Midnight- la cual hace parte del libro registrado\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"Midnight\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"El nombre del autor del libro The Midnight Library registrado, es Matt Haig\", function () {\r",
+									"    var jsonData = pm.response.json();   \r",
+									"    pm.expect(jsonData.author).to.eql(\"Matt Haig\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Base_url}}/books/{{id_book}}",
+							"host": [
+								"{{Base_url}}"
+							],
+							"path": [
+								"books",
+								"{{id_book}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener libro no valido",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Consulta Fallida, codigo 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"-Error-\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"error\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"El libro no se encuentra registrado\", function () {\r",
+									"    var jsonData = pm.response.json();   \r",
+									"    pm.expect(jsonData.error).to.eql(\"No book with id NaN\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Base_url}}/books/{{id_book_invalido}}",
+							"host": [
+								"{{Base_url}}"
+							],
+							"path": [
+								"books",
+								"{{id_book_invalido}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Generar token",
+			"item": [
+				{
+					"name": "Generar token no Valido",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 409 \", function () {\r",
+									"    pm.response.to.have.status(409);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Error el generar token -Error-\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"error\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"El cliente ya se encuentra registrado, utlizar otro email\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.error).to.eql(\"API client already registered. Try a different email.\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"clientName\": \"PostmanReto\",\r\n   \"clientEmail\": \"reto@example.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base_url}}/api-clients/",
+							"host": [
+								"{{Base_url}}"
+							],
+							"path": [
+								"api-clients",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Generar token Valido",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Registro Exitoso, codigo 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"pm.test(\"Se ha creado el token de acceso -Access Token-\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"accessToken\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"clientName\": \"RetoP3\",\r\n   \"clientEmail\": \"retop3@example.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base_url}}/api-clients/",
+							"host": [
+								"{{Base_url}}"
+							],
+							"path": [
+								"api-clients",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Obtener Ordenes",
+			"item": [
+				{
+					"name": "Obtener Ordenes Validas",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Consulta Exitosa, codigo 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"La respuesta tiene el nombre del cliente -John- el cual esta registrado\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"John\");\r",
+									"});\r",
+									"pm.test(\"El cliente David Santiago esta registrado\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    var idBook=jsonData.find(x=>x.bookId ==3)\r",
+									"    console.log(idBook)\r",
+									"    pm.expect(idBook.customerName).to.eql(\"David Santiago\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "730b7fad304fef5a6332ffd1601792d207fe305dedf4473fb9b92a0a1cebae37",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Base_url}}/orders",
+							"host": [
+								"{{Base_url}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Ordenes sin Aut",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Autenticacion no valida, codigo 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									"pm.test(\"No tiene autenticacion, Error\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"error\");\r",
+									"});\r",
+									"pm.test(\"Falta token de autorizacion\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.error).to.eql(\"Missing Authorization header.\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Base_url}}/orders",
+							"host": [
+								"{{Base_url}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Obtener ordenes por id",
+			"item": [
+				{
+					"name": "Obtener Orden Valida",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Consulta Exitosa, codigo 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"La respuesta solicitada tiene el nombre del cliente -David Santiago-\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"David Santiago\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"El Id de la orden solicitada corresponde al numero 3\", function () {\r",
+									"    var jsonData = pm.response.json();   \r",
+									"    pm.expect(jsonData.bookId).to.eql(3);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "730b7fad304fef5a6332ffd1601792d207fe305dedf4473fb9b92a0a1cebae37",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Base_url}}/orders/{{id_orden}}",
+							"host": [
+								"{{Base_url}}"
+							],
+							"path": [
+								"orders",
+								"{{id_orden}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Orden no Valida",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Consulta Fallida, codigo 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"-Error -\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"error\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"La orden no se encuentra registrada\", function () {\r",
+									"    var jsonData = pm.response.json();   \r",
+									"    pm.expect(jsonData.error).to.eql(\"No order with id orden no valida.\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "730b7fad304fef5a6332ffd1601792d207fe305dedf4473fb9b92a0a1cebae37",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Base_url}}/orders/{{id_orden_invalido}}",
+							"host": [
+								"{{Base_url}}"
+							],
+							"path": [
+								"orders",
+								"{{id_orden_invalido}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Orden sin Aut",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Consulta Fallida, codigo 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"-Error -\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"error\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"No existe token para autorizacion\", function () {\r",
+									"    var jsonData = pm.response.json();   \r",
+									"    pm.expect(jsonData.error).to.eql(\"Missing Authorization header.\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Base_url}}/orders/{{id_orden}}",
+							"host": [
+								"{{Base_url}}"
+							],
+							"path": [
+								"orders",
+								"{{id_orden}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Crear  Orden",
+			"item": [
+				{
+					"name": "Agregar Orden Valida",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Registro Exitoso, codigo 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"/*pm.test(\"El nombre solo admite tipo de dato String\", function () {\r",
+									"    console.log(\"Asertion\");\r",
+									"    var jsonData = pm.response.json();\r",
+									"    console.log(jsonData.customerName);\r",
+									"    pm.expect(jsonData.customerName).to.be.a(\"string\");\r",
+									"});*/\r",
+									"pm.test(\"Creacion exitosa, parametro -created- es true\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.created).to.eql(true);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "730b7fad304fef5a6332ffd1601792d207fe305dedf4473fb9b92a0a1cebae37",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"bookId\": 3,\r\n  \"customerName\": \"Roman\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base_url}}/orders/",
+							"host": [
+								"{{Base_url}}"
+							],
+							"path": [
+								"orders",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Agregar Orden no Valida",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Registro No Valido, codigo 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"pm.test(\"-Error-\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"error\");\r",
+									"});\r",
+									"pm.test(\"El libro indicado no esta habilitado\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.error).to.eql(\"This book is not in stock. Try again later.\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "730b7fad304fef5a6332ffd1601792d207fe305dedf4473fb9b92a0a1cebae37",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"bookId\": 2,\r\n  \"customerName\": \"Daniel\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base_url}}/orders/",
+							"host": [
+								"{{Base_url}}"
+							],
+							"path": [
+								"orders",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Agregar Orden Sin Aut",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"No hay autorizacion, codigo 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									"pm.test(\"-Error-\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"error\");\r",
+									"});\r",
+									"pm.test(\"No existe toker para autorizacion\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.error).to.eql(\"Missing Authorization header.\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"bookId\": 3,\r\n  \"customerName\": \"Daniel\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base_url}}/orders/",
+							"host": [
+								"{{Base_url}}"
+							],
+							"path": [
+								"orders",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Editar orden",
+			"item": [
+				{
+					"name": "Editar Orden Valida",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Edicion Exitosa, codigo 204\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "730b7fad304fef5a6332ffd1601792d207fe305dedf4473fb9b92a0a1cebae37",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"customerName\": \"David Santiago\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base_url}}/orders/{{id_orden_editar}}",
+							"host": [
+								"{{Base_url}}"
+							],
+							"path": [
+								"orders",
+								"{{id_orden_editar}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Editar Orden no Valida",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Edicion Fallida, codigo 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"-Error -\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"error\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"La orden no se encuentra registrada\", function () {\r",
+									"    var jsonData = pm.response.json();   \r",
+									"    pm.expect(jsonData.error).to.eql(\"No order with id orden no valida.\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "730b7fad304fef5a6332ffd1601792d207fe305dedf4473fb9b92a0a1cebae37",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"customerName\": \"David Santiago\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base_url}}/orders/{{id_orden_editar_invalido}}",
+							"host": [
+								"{{Base_url}}"
+							],
+							"path": [
+								"orders",
+								"{{id_orden_editar_invalido}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Editar Orden sin Aut",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Edicion Fallida, codigo 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"-Error -\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"error\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"No existe token para autirizacion\", function () {\r",
+									"    var jsonData = pm.response.json();   \r",
+									"    pm.expect(jsonData.error).to.eql(\"Missing Authorization header.\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"customerName\": \"David Santiago\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base_url}}/orders/{{id_orden_editar_invalido}}",
+							"host": [
+								"{{Base_url}}"
+							],
+							"path": [
+								"orders",
+								"{{id_orden_editar_invalido}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Elminar Orden",
+			"item": [
+				{
+					"name": "Elimianar Orden Valida",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Registro eliminado Exitosamente, codigo 204\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "730b7fad304fef5a6332ffd1601792d207fe305dedf4473fb9b92a0a1cebae37",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{Base_url}}/orders/{{id_orden_eliminar}}",
+							"host": [
+								"{{Base_url}}"
+							],
+							"path": [
+								"orders",
+								"{{id_orden_eliminar}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Elimianar Orden no Valida",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Eliminacion Fallida, codigo 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"La orden a eliminar no es valida -\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"error\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"La orden no se encuentra registrada\", function () {\r",
+									"    var jsonData = pm.response.json();   \r",
+									"    pm.expect(jsonData.error).to.eql(\"No order with id orden no valida.\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "730b7fad304fef5a6332ffd1601792d207fe305dedf4473fb9b92a0a1cebae37",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{Base_url}}/orders/{{id_orden_eliminar_invalido}}",
+							"host": [
+								"{{Base_url}}"
+							],
+							"path": [
+								"orders",
+								"{{id_orden_eliminar_invalido}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

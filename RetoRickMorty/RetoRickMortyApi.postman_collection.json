@@ -1,0 +1,201 @@
+{
+	"info": {
+		"_postman_id": "fbe2359c-b6ae-48da-ba35-ad69c31953ec",
+		"name": "RetoRickMortyApi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21225657"
+	},
+	"item": [
+		{
+			"name": "Obtener Personajes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Consulta exitosa, codigo 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"La respuesta tiene la cadena de caracteres -species- y -human-\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"species\");\r",
+							"    pm.expect(pm.response.text()).to.include(\"Human\");\r",
+							"});\r",
+							"pm.test(\"El personaje Beth Smith con id 4, se encuentra registrado\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    var idCharacter=jsonData.results.find(x=>x.id ==4)\r",
+							"    pm.expect(idCharacter.name).to.eql(\"Beth Smith\");\r",
+							"    pm.expect(idCharacter.status).to.eql(\"Alive\");\r",
+							"    pm.expect(idCharacter.species).to.eql(\"Human\");\r",
+							"    pm.expect(idCharacter.gender).to.eql(\"Female\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Base_url}}/character",
+					"host": [
+						"{{Base_url}}"
+					],
+					"path": [
+						"character"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Obtener Personajes por Pagina",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Consulta exitosa, codigo 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"El personaje Aqua Morty con id 21, se encuentra registrado\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    var idCharacter=jsonData.results.find(x=>x.id ==21)\r",
+							"    pm.expect(idCharacter.name).to.eql(\"Aqua Morty\");\r",
+							"    pm.expect(idCharacter.status).to.eql(\"unknown\");\r",
+							"    pm.expect(idCharacter.species).to.eql(\"Humanoid\");\r",
+							"    pm.expect(idCharacter.type).to.eql(\"Fish-Person\");\r",
+							"    pm.expect(idCharacter.gender).to.eql(\"Male\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Base_url}}/character/?page={{Pagina_numero}}",
+					"host": [
+						"{{Base_url}}"
+					],
+					"path": [
+						"character",
+						""
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "{{Pagina_numero}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Obtener Personaje Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Consulta exitosa, codigo 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Abradolf Lincler con id 7, se encuentra registrado\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.id).to.eql(7);\r",
+							"    pm.expect(jsonData.name).to.eql(\"Abradolf Lincler\");\r",
+							"    pm.expect(jsonData.status).to.eql(\"unknown\");\r",
+							"    pm.expect(jsonData.species).to.eql(\"Human\");\r",
+							"    pm.expect(jsonData.type).to.eql(\"Genetic experiment\");\r",
+							"    pm.expect(jsonData.gender).to.eql(\"Male\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Base_url}}/character/{{Personaje_id}}",
+					"host": [
+						"{{Base_url}}"
+					],
+					"path": [
+						"character",
+						"{{Personaje_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Obtener Personajes no Existentes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Consulta exitosa, codigo 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"No se encontraron Personajes con esos parametros\", function () {\r",
+							"    var jsonData = pm.response.json(); \r",
+							"    pm.expect(jsonData).to.be.empty;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Base_url}}/character/{{Personajes_no_existentes_id}}",
+					"host": [
+						"{{Base_url}}"
+					],
+					"path": [
+						"character",
+						"{{Personajes_no_existentes_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Filtrar por Caracteres",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Base_url}}/character/?name=rick&status=alive",
+					"host": [
+						"{{Base_url}}"
+					],
+					"path": [
+						"character",
+						""
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "rick"
+						},
+						{
+							"key": "status",
+							"value": "alive"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
